@@ -90,12 +90,17 @@ with app.app_context():
     @app.route("/update_user", methods=["POST"])
     def update_user():
         email = request.form["email"]
+        username = request.form["username"]
         user = User.query.filter_by(email=email).first()
         if user:
-            user.name = request.form["name"]
-            user.username = request.form["username"]
-            db.session.commit()
-            return "user updated successfully"
+            username = User.query.filter_by(username=username).first()
+            if username:
+                return "username already exists"
+            else:
+                user.name = request.form["name"]
+                user.username = request.form["username"]
+                db.session.commit()
+                return "user updated successfully"
         else:
             return "user does not exist"
 
