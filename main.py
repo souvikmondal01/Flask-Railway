@@ -1,12 +1,14 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+from config import db
+from user import User
 
 # DB_URL = "postgresql+psycopg2://postgres:12345@localhost:5432/crudApp"
 DB_URL = "postgresql://postgres:KSynoUCoxXSMyEoxjn1B@containers-us-west-182.railway.app:7392/railway"
 SECRET_KEY = "yoursecretkey"
 
 app = Flask(__name__)
-db = SQLAlchemy()
+# db = SQLAlchemy()
 app.config["SQLALCHEMY_DATABASE_URI"] = DB_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False
@@ -15,13 +17,6 @@ db.init_app(app)
 print("DB Initialized Successfully")
 
 with app.app_context():
-    class User(db.Model):
-        __tablename__ = 'user'
-        id = db.Column(db.Integer, primary_key=True)
-        name = db.Column(db.String(200), nullable=False)
-        username = db.Column(db.String(200), nullable=False)
-        email = db.Column(db.String(200), nullable=False)
-        password = db.Column(db.String(200), nullable=False)
 
     @app.route('/')
     def index():
