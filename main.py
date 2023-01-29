@@ -8,7 +8,6 @@ DB_URL = "postgresql://postgres:KSynoUCoxXSMyEoxjn1B@containers-us-west-182.rail
 SECRET_KEY = "yoursecretkey"
 
 app = Flask(__name__)
-# db = SQLAlchemy()
 app.config["SQLALCHEMY_DATABASE_URI"] = DB_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = False
@@ -76,6 +75,42 @@ with app.app_context():
         user_data["users"] = user_list
 
         return jsonify(user_data)
+
+    @app.route("/delete_user", methods=["POST"])
+    def delete_user():
+        email = request.form["email"]
+        user = User.query.filter_by(email=email).first()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            return "user deleted successfully"
+        else:
+            return "user does not exist"
+
+    @app.route("/update_user", methods=["POST"])
+    def update_user():
+        email = request.form["email"]
+        user = User.query.filter_by(email=email).first()
+        if user:
+            user.name = request.form["name"]
+            user.username = request.form["username"]
+            db.session.commit()
+            return "user updated successfully"
+        else:
+            return "user does not exist"
+
+    @app.route("/fetch_profile", methods=["POST", "GET"])
+    def fetch_profile():
+        email = request.form["email"]
+        user = User.query.filter_by(email=email).first()
+        if user:
+            return jsonify({
+                "id": user.id,
+                "name": user.name,
+                "username": user.username,
+                "email": user.email})
+        else:
+            return "user does not exist"
 
     # db.drop_all()
     db.create_all()
